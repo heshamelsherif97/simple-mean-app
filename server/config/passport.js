@@ -1,6 +1,5 @@
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
-var crypto = require("crypto");
 const ADMIN = require('../models/admin');
 
 module.exports = function(passport){
@@ -16,49 +15,6 @@ module.exports = function(passport){
 
 
     });
-
-        passport.use('admin-signup', new LocalStrategy({
-                usernameField: 'email',
-                passwordField:'password',
-                passReqToCallback: true
-            },
-            function (req,username,password,next) {
-                process.nextTick(function () {
-                    if (phone && address && name) {
-                      //Find clients with the given username or email
-                      ADMIN.findOne({'local.email':email}, function(err, user){
-                        console.log('sad');
-
-                        if (err) {
-                          next({success: false, error: "An unexpected error has occured"})
-                        }
-                        if (user) {
-                          next({success: false, error: "This email already exists!"})
-                        }
-                        else {
-                          var admin = new ADMIN();
-                          admin.local.email = req.body.email;
-                          admin.name = req.body.name;
-                          admin.phone = req.body.phone;
-                          admin.address = req.body.address;
-                          admin.local.salt = crypto.randomBytes(16).toString('hex')
-                          admin.local.hash = crypto.pbkdf2Sync(password, client.local.salt, 1000, 64, 'sha512').toString('hex')
-                          admin.save(function(err) {
-                            if(err) {
-                              next({success: false, error: 'An unexpected error has occured'})
-                            }
-
-                            return next(null, client)
-                          })
-                        }
-                      })
-                    }
-                    else {
-                      next({success: false, error: "Incomplete information entered"})
-                    }
-                });
-
-            }));
 
           passport.use('admin-login', new LocalStrategy({
                   usernameField: 'email',

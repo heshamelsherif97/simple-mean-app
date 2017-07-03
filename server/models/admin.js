@@ -1,26 +1,38 @@
 var mongoose = require('mongoose');
-var adminSchema = mongoose.Schema({
-  name:{
-    type:String,
-    required:true
-  },
- local: {
-     email: {
-         type: String,
-         required: true,
-         unique: true
-     },
-     hash: String,
-     salt: String
- },
- phone:String,
- address: String
-});
+var bcrypt = require('bcryptjs');
 
-adminSchema.methods.validPassword = function(salt, password, hash) {
-    var enteredHash = crypto.pbkdf2Sync(password, salt, 1000, 64, 'sha512').toString('hex')
-    return enteredHash === hash;
-}
+var adminSchema = mongoose.Schema({
+  name: String,
+  email: String,
+  password: String,
+  phone: String,
+  address: String
+});
 
 var admin = mongoose.model('admin', adminSchema);
 module.exports = admin;
+
+module.exports.createAdmin = function(newAdmin, callback){
+	bcrypt.genSalt(10, function(err, salt) {
+	    bcrypt.hash(newAdmin.password, salt, function(err, hash) {
+	        newAdmin.password = hash;
+	        newAdmin.save(callback);
+	    });
+	});
+}
+
+module.exports.comparePassword = function(candidatePassword, hash, callback){
+	bcrypt.compare(candidatePassword, hash, function(err, isMatch) {
+    	if(err) throw err;
+    	callback(null, isMatch);
+	});
+}
+
+module.exports.getAdminByEmail = function(email, callback){
+	var query = {email: email};
+	admin.findOne(query, callback);
+}
+
+module.exports.getAdminById = function(id, callback){
+	admin.findById(id, callback);
+}

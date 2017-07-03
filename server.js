@@ -4,6 +4,7 @@ var bodyParser = require('body-parser');
 var passport = require('passport');
 var session = require('express-session');
 var path = require('path');
+var expressValidator = require('express-validator');
 var api = require('./server/routes/api');
 var dB = "mongodb://127.0.0.1:27017/SimpleApp";
 var app = express();
