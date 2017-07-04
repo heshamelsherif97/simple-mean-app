@@ -2,6 +2,7 @@ var mongoose = require('mongoose');
 var product = require('../models/product');
 var passport = require('passport');
 var mailer = require('./mailController')
+var multer = require('multer')
 require('../config/passport')(passport);
 const ADMIN = require('../models/admin');
 
@@ -154,7 +155,6 @@ module.exports = {
   },
 
   activateAccount: function(req, res, next){
-   console.log('sda');
    var id = req.params.id;
    ADMIN.findOne({_id:id}, function(err, user){
      if(err) res.json({success: false});
@@ -175,5 +175,4 @@ module.exports = {
      }
    })
  },
-
 }
