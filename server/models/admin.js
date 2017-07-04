@@ -6,7 +6,9 @@ var adminSchema = mongoose.Schema({
   email: String,
   password: String,
   phone: String,
-  address: String
+  address: String,
+  confirmed: Boolean,
+  admin: Boolean
 });
 
 var admin = mongoose.model('admin', adminSchema);
